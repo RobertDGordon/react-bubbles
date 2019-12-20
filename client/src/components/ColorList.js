@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
+// import { palette } from '@potion/color';
+
+// const myPalette = palette({
+//   'scheme': 'Blues'
+// })
 
 const initialColor = {
   color: "",
@@ -8,8 +13,20 @@ const initialColor = {
 
 const ColorList = ({ colors, updateColors }) => {
   // console.log(colors);
+
+  // console.log(myPalette)
+
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+
+  const generateRandomColors = () =>{
+    let colors = []
+    for(let i = 0; i < 1; i++){
+        colors.push('#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6),) 
+    }
+    // console.log(colors)
+    return colors
+  }
 
   const editColor = color => {
     setEditing(true);
@@ -43,6 +60,16 @@ const ColorList = ({ colors, updateColors }) => {
       })
       .catch(err => console.log(err))
   };
+
+  const addRandom = e => {
+    e.preventDefault()
+    const randomColor = generateRandomColors()
+    console.log (randomColor)
+    setColorToEdit({
+      ...colorToEdit, color: `${randomColor}`,
+      code: { hex: `${randomColor}` }
+    })
+  }
 
   const addColor = e => {
     e.preventDefault()
@@ -139,6 +166,7 @@ const ColorList = ({ colors, updateColors }) => {
           </label>
           <div className="button-row">
             <button type="submit">save</button>
+            <button onClick={addRandom}>random</button>
           </div>
         </form>
       )}

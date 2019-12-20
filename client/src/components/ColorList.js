@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const initialColor = {
@@ -26,6 +25,7 @@ const ColorList = ({ colors, updateColors }) => {
       .then(res => {
         console.log('***', res.data, 'put response')
         updateColors(colorToEdit)
+        setEditing(false)
       })
       .catch(err => console.log(err))
   };
@@ -40,6 +40,19 @@ const ColorList = ({ colors, updateColors }) => {
       })
       .catch(err => console.log(err))
   };
+
+  const addColor = e => {
+    e.preventDefault()
+    console.log(colorToEdit)
+    axiosWithAuth()
+    .post(`/colors/`, colorToEdit)
+    .then(res => {
+      console.log('***', res.data, 'post response')
+      updateColors(colorToEdit)
+      setColorToEdit(initialColor)
+    })
+    .catch(err => console.log(err))
+  }
 
   return (
     <div className="colors-wrap">
@@ -65,7 +78,7 @@ const ColorList = ({ colors, updateColors }) => {
         ))}
       </ul>
       {editing && (
-        <form onSubmit={saveEdit}>
+        <form onSubmit={addColor}>
           <legend>edit color</legend>
           <label>
             color name:
@@ -94,8 +107,37 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
+      <div className="spacer">
+      {!editing && (
+        <form onSubmit={addColor}>
+          <legend>add color</legend>
+          <label>
+            color name:
+            <input
+              onChange={e =>
+                setColorToEdit({ ...colorToEdit, color: e.target.value })
+              }
+              value={colorToEdit.color}
+            />
+          </label>
+          <label>
+            hex code:
+            <input
+              onChange={e =>
+                setColorToEdit({
+                  ...colorToEdit,
+                  code: { hex: e.target.value }
+                })
+              }
+              value={colorToEdit.code.hex}
+            />
+          </label>
+          <div className="button-row">
+            <button type="submit">save</button>
+          </div>
+        </form>
+      )}
+      </div>
     </div>
   );
 };

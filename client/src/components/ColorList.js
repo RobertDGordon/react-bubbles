@@ -20,7 +20,8 @@ const ColorList = ({ colors, updateColors }) => {
   const saveEdit = e => {
     e.preventDefault();
     // console.log(colorToEdit.id)
-    axiosWithAuth()
+    if (colorToEdit.color !== '' && colorToEdit.code.hex !== ''){
+          axiosWithAuth()
       .put(`/colors/${colorToEdit.id}`, colorToEdit)
       .then(res => {
         console.log('***', res.data, 'put response')
@@ -28,6 +29,8 @@ const ColorList = ({ colors, updateColors }) => {
         setEditing(false)
       })
       .catch(err => console.log(err))
+    }
+
   };
 
   const deleteColor = color => {
@@ -43,15 +46,17 @@ const ColorList = ({ colors, updateColors }) => {
 
   const addColor = e => {
     e.preventDefault()
-    console.log(colorToEdit)
-    axiosWithAuth()
-    .post(`/colors/`, colorToEdit)
-    .then(res => {
-      console.log('***', res.data, 'post response')
-      updateColors(colorToEdit)
-      setColorToEdit(initialColor)
-    })
-    .catch(err => console.log(err))
+    console.log('add', colorToEdit)
+    if (colorToEdit.color !== '' && colorToEdit.code.hex !== ''){
+      axiosWithAuth()
+      .post(`/colors/`, colorToEdit)
+      .then(res => {
+        console.log('***', res.data, 'post response')
+        updateColors(colorToEdit)
+        setColorToEdit(initialColor)
+      })
+      .catch(err => console.log(err))
+    }
   }
 
   return (
@@ -78,7 +83,7 @@ const ColorList = ({ colors, updateColors }) => {
         ))}
       </ul>
       {editing && (
-        <form onSubmit={addColor}>
+        <form onSubmit={saveEdit}>
           <legend>edit color</legend>
           <label>
             color name:
